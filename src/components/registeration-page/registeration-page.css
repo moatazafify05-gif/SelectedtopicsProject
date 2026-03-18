@@ -1,0 +1,237 @@
+.container{
+      display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    margin: 0px 80px 80px 110px;
+
+}
+.building-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s, box-shadow 0.25s;
+  animation: cardReveal 0.5s ease both;
+  margin: 0px 20px 0px 40px;
+  width: 400px;
+
+}
+.styl{
+  display: flex;
+}
+.styl2{
+  display: flex;
+}
+.building-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 36px rgba(26, 45, 90, 0.16);
+}
+
+@keyframes cardReveal {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Image ── */
+.card-image-wrap {
+  width: 100%;
+  height: 190px;
+  overflow: hidden;
+
+  background-size: cover;
+  background-position: center;
+}
+
+.card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.building-card:hover .card-img {
+  transform: scale(1.04);
+}
+
+/* ── Title ── */
+.building-title {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--navy);
+  text-align: center;
+  padding: 1rem 1rem 0.5rem;
+  letter-spacing: 0.01em;
+}
+
+/* ── Table ── */
+.table-wrap {
+  padding: 0 1rem;
+  overflow-x: auto;
+}
+
+.halls-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.halls-table thead tr {
+  background: #f8fafc;
+  border-bottom: 2px solid var(--border);
+}
+
+.halls-table th {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #64748b;
+  text-align: left;
+  padding: 0.6rem 0.6rem;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.halls-table th:first-child { padding-left: 0.2rem; }
+
+.sort-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0 0.2rem;
+  vertical-align: middle;
+  transition: color 0.15s;
+}
+.sort-btn:hover { color: var(--navy); }
+
+.halls-table tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.12s;
+}
+.halls-table tbody tr:last-child { border-bottom: none; }
+.halls-table tbody tr:hover { background: #f8fafc; }
+
+.halls-table td {
+  padding: 0.7rem 0.6rem;
+  color: #1e293b;
+  vertical-align: middle;
+}
+
+/* ── Cells ── */
+.hall-name {
+  font-weight: 600;
+  color: var(--navy-mid);
+  white-space: nowrap;
+}
+
+.capacity-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+.cap-icon {
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+.status-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+
+.status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.status-dot.available { background: var(--green); }
+.status-dot.booked    { background: var(--orange); }
+
+.status-label {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.status-label.available { color: var(--green); }
+.status-label.booked    { color: var(--orange); }
+
+.date-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.83rem;
+  color: #374151;
+  background: #f1f5f9;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.2rem 0.5rem;
+  white-space: nowrap;
+}
+
+.date-cell {
+  text-align: right;
+}
+
+.cal-icon {
+  color: #94a3b8;
+}
+
+/* ── Reserve Button ── */
+.reserve-btn {
+  background: var(--blue);
+  color: var(--white);
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.38rem 0.9rem;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.12s;
+  white-space: nowrap;
+}
+
+.reserve-btn:hover {
+  background: var(--blue-dark);
+  transform: translateY(-1px);
+}
+
+.reserve-btn:active {
+  transform: translateY(0);
+}
+
+/* ── Card Footer ── */
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1rem;
+  border-top: 1px solid var(--border);
+  background: #f8fafc;
+  margin-top: auto;
+}
+
+.footer-date {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  color: #475569;
+  font-family: var(--font-body);
+}
+
+.footer-reserve {
+  font-size: 0.85rem;
+  padding: 0.45rem 1.1rem;
+}

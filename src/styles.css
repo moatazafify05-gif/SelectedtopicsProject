@@ -1,1 +1,40 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Source+Sans+3:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --navy:       #1a2d5a;
+  --navy-mid:   #243b72;
+  --blue:       #2d5be3;
+  --blue-dark:  #1e45b8;
+  --red:        #c0392b;
+  --red-dark:   #a93226;
+  --green:      #27ae60;
+  --orange:     #e67e22;
+  --gray-light: #f0f2f5;
+  --gray-mid:   #dce1ea;
+  --gray-text:  #6b7280;
+  --white:      #ffffff;
+  --card-bg:    #ffffff;
+  --border:     #e2e8f0;
+  --shadow:     0 4px 24px rgba(26, 45, 90, 0.10);
+  --radius:     14px;
+  --font-body:  'Source Sans 3', sans-serif;
+  --font-serif: 'Merriweather', Georgia, serif;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--gray-light);
+  color: #1e293b;
+  line-height: 1.6;
+}
+
+button {
+  cursor: pointer;
+  font-family: var(--font-body);
+}

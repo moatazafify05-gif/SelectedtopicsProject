@@ -21,10 +21,12 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "src/assets",
+                "output": "/assets"
               }
             ],
             "styles": [
+              "node_modules/aos/dist/aos.css",
               "src/styles.css"
             ]
           },

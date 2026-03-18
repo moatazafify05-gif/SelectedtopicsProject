@@ -1,0 +1,99 @@
+
+
+
+<div class="container row-cols-1 row-cols-md-3 g-4 ">
+@for(build of buildings; track build.id){
+<!-- building-card.component.html -->
+<div class="building-card">
+
+  <!-- Building Image -->
+  <div class="card-image-wrap">
+    <img [src]="build.imageUrl" [alt]="build.name" class="card-img" loading="lazy" />
+  </div>
+
+  <!-- Building Title -->
+  <h2 class="building-title">{{ build.name }}</h2>
+
+  <!-- Halls Table -->
+  <div class="table-wrap">
+    <table class="halls-table">
+      <thead>
+        <tr class="styl">
+          <th>Hall</th>
+          <th>Capacity</th>
+          <th>
+            Availability
+            <button class="sort-btn" (click)="toggleSort()" aria-label="Sort by availability">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M6 9l6-6 6 6M6 15l6 6 6-6"/>
+              </svg>
+            </button>
+          </th>
+          <th *ngIf="showDateCol">Date</th>
+        </tr>
+
+      </thead>
+      <tbody>
+        <tr *ngFor="let hall of sortedHalls" class="styl2">
+          <td class="hall-name">{{ hall.name }}</td>
+          <td class="capacity-cell">
+            <svg class="cap-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+            </svg>
+            {{ hall.capacity }}
+          </td>
+          <td class="status-cell">
+            <!-- Date picker row -->
+            <ng-container *ngIf="hall.status === 'date'">
+              <span class="date-badge">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                {{ hall.date }}
+              </span>
+            </ng-container>
+
+
+            <!-- Available -->
+            <ng-container *ngIf="hall.status === 'available'">
+              <span class="status-dot available"></span>
+              <span class="status-label available">Available</span>
+            </ng-container>
+
+            <!-- Booked -->
+            <ng-container *ngIf="hall.status === 'booked'">
+              <span class="status-dot booked"></span>
+              <span class="status-label booked">Booked</span>
+            </ng-container>
+          </td>
+
+
+          <!-- Date col (optional) -->
+          <td *ngIf="showDateCol" class="date-cell">
+            <ng-container *ngIf="hall.status !== 'date'">
+              <button class="reserve-btn" (click)="onReserve(hall)">Reserve</button>
+            </ng-container>
+            <ng-container *ngIf="hall.status === 'date'">
+              <svg class="cal-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+            </ng-container>
+          </td>
+
+        </tr>
+
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+  <!-- Card Footer -->
+
+
+</div>
+
+}
+
+</div>
