@@ -4,4 +4,7 @@ export interface Hall {
   capacity: number;
   date?: string; // Only for 'date' status
   id: number;
+
+bookedDates?: string[] ;
+
 }
