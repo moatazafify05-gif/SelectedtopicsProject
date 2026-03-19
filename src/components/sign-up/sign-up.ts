@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink } from "@angular/router";
+import * as AOS from 'aos';
 
 @Component({
   selector: 'app-sign-up',
@@ -20,7 +21,9 @@ export class SignUp {
   toggleConfirmPassword() {
     this.isConfirmPasswordVisible = !this.isConfirmPasswordVisible;
   }
-
+ngonInit() {
+  AOS.init();
 
 }
 
+}

@@ -1,13 +1,15 @@
 
 .page-background {
-  min-height: 100vh;
+   min-height: 100vh;
   display: flex;
-  justify-content: center;
   align-items: center;
-
-  background: url('../../assets/main-photo.jpeg') no-repeat center center/cover;
-  position: relative;
-  font-family: sans-serif;
+  justify-content: center;
+  background: linear-gradient(135deg, #dde8f8 0%, #eef3fb 50%, #cfddf5 100%);
+  padding: 2rem 1rem;
+  font-family: var(--font-body, 'Source Sans 3', sans-serif);
+  background-image: url(../../assets/bluredMainImage.jpeg);
+  background-size: cover;
+  background-position: center;
 }
 
 
@@ -15,8 +17,8 @@
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  backdrop-filter: blur(8px);
-  background-color: rgba(255, 255, 255, 0.2);
+
+
   z-index: 0;
 }
 
@@ -30,6 +32,11 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   z-index: 1;
   padding-bottom: 20px;
+  animation: cardIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(28px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
 }
 
 
@@ -95,8 +102,13 @@
   padding: 10px 15px;
   margin-bottom: 12px;
   background-color: #fcfcfc;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
-
+.input-group:focus-within {
+  border-color: #2d5be3;
+  box-shadow: 0 0 0 3px rgba(45, 91, 227, 0.12);
+  background: #fff;
+}
 .input-group input {
   border: none;
   outline: none;
@@ -147,20 +159,23 @@
 
 
 .create-btn {
-  width: 100%;
-  background-color: #1565c0;
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
+   width: 100%;
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 10px;
-  transition: 0.3s;
+  justify-content: center;
+  gap: 0.6rem;
+  background: #2d5be3;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.9rem 1.5rem;
+  font-family: var(--font-body, sans-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  margin-bottom: 1.25rem;
 }
 
 .create-btn:hover {
@@ -190,24 +205,34 @@
 
 .social-buttons {
   display: flex;
-  gap: 15px;
+  gap: 100px;
   margin-bottom: 15px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1.35rem;
+}
+.social-btn:hover {
+  border-color: #2d5be3;
+  box-shadow: 0 3px 12px rgba(45, 91, 227, 0.12);
+  transform: translateY(-1px);
 }
 
 .social-btn {
-  flex: 1;
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 8px;
-  background: white;
-  border: 1px solid #e0e0e0;
-  padding: 10px;
-  border-radius: 8px;
-  font-size: 14px;
+  justify-content: center;
+  gap: 0.55rem;
+  background: #fff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.65rem 1rem;
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.9rem;
   font-weight: 600;
-  color: #444;
+  color: #1e293b;
   cursor: pointer;
+  transition: border-color 0.18s, box-shadow 0.18s, transform 0.12s;
 }
 
 .social-icon {
