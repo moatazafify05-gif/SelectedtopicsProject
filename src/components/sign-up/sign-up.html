@@ -1,0 +1,71 @@
+
+<div class="page-background">
+  <div class="sign-up-card">
+
+    <div class="card-header">
+      <div class="header-content">
+        <h1>Sign Up</h1>
+        <p>Create Your Account</p>
+        <div class="blue-line"></div>
+      </div>
+      <div class="header-image">
+        </div>
+    </div>
+
+    <form class="signup-form">
+
+      <div class="input-group">
+        <span class="icon text-blue">👤</span> <input type="text" placeholder="Full Name">
+      </div>
+
+      <div class="input-group">
+        <span class="icon text-blue">✉️</span>
+        <input type="email" placeholder="Email Address">
+      </div>
+
+      <div class="input-group">
+        <span class="icon text-blue">📞</span>
+        <input type="tel" placeholder="Phone Number">
+      </div>
+
+      <div class="input-group">
+        <span class="icon text-blue">🔒</span>
+        <input [type]="isPasswordVisible ? 'text' : 'password'" placeholder="Password">
+        <span class="icon-right cursor-pointer" (click)="togglePassword()">👁️</span>
+      </div>
+
+      <div class="input-group">
+        <span class="icon text-blue">🔒</span>
+        <input [type]="isConfirmPasswordVisible ? 'text' : 'password'" placeholder="Confirm Password">
+        <span class="icon-right cursor-pointer" (click)="toggleConfirmPassword()">👁️</span>
+      </div>
+
+      <div class="terms-group">
+        <input type="checkbox" id="terms" checked>
+        <label for="terms">I agree to the <a href="#">Terms & Privacy Policy</a></label>
+      </div>
+
+      <button type="submit" class="create-btn">
+        <span class="btn-icon">👤+</span> Create Account
+      </button>
+
+      <div class="divider">
+        <span>Or Sign Up With</span>
+      </div>
+
+      <div class="social-buttons">
+        <button type="button" class="social-btn">
+          <img src="../../assets/google-icon.jpeg" alt="G" class="social-icon"> Google
+        </button>
+        <button type="button" class="social-btn">
+          <img src="../../assets/facebook-icon.jpeg" alt="F" class="social-icon"> Facebook
+        </button>
+      </div>
+
+      <p class="footer-text">
+        Already have an account? <a routerLink="/sign-in">Sign In</a>
+      </p>
+
+    </form>
+  </div>
+</div>
