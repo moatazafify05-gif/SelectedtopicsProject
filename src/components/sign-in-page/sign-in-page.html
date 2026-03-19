@@ -1,1 +1,128 @@
-<p>sign-in-page works!</p>
+<div class="auth-wrapper">
+  <div class="auth-card">
+
+    <!-- Hero Image -->
+    <div class="card-hero">
+      <img
+        src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&q=80"
+        alt="University Campus"
+        class="hero-img"
+      />
+      <div class="hero-wave">
+        <svg viewBox="0 0 500 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,40 C150,90 350,0 500,50 L500,80 L0,80 Z" fill="#ffffff"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Card Body -->
+    <div class="card-body">
+
+      <!-- Title -->
+      <div class="card-header">
+        <h1 class="card-title">Sign In</h1>
+        <div class="title-underline"></div>
+        <p class="card-subtitle">Welcome Back!</p>
+      </div>
+
+      <!-- Form -->
+      <form class="sign-in-form" (ngSubmit)="onSubmit()" [formGroup]="form" novalidate>
+
+        <!-- Email -->
+        <div class="input-group" [class.error]="isInvalid('email')">
+          <span class="input-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+          </span>
+          <input
+            type="email"
+            placeholder="Email Address"
+            formControlName="email"
+            autocomplete="email"
+            class="form-input"
+          />
+        </div>
+        <span class="field-error" *ngIf="isInvalid('email')">Please enter a valid email.</span>
+
+        <!-- Password -->
+        <div class="input-group" [class.error]="isInvalid('password')">
+          <span class="input-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18 8h-1V6A5 5 0 0 0 7 6v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2zm-6 9a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm3.1-9H8.9V6a3.1 3.1 0 0 1 6.2 0v2z"/>
+            </svg>
+          </span>
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            placeholder="Password"
+            formControlName="password"
+            autocomplete="current-password"
+            class="form-input"
+          />
+          <button type="button" class="toggle-pw" (click)="togglePassword()" aria-label="Toggle password">
+            <svg *ngIf="!showPassword" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+            <svg *ngIf="showPassword" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+              <line x1="1" y1="1" x2="23" y2="23"/>
+            </svg>
+          </button>
+        </div>
+        <span class="field-error" *ngIf="isInvalid('password')">Password is required.</span>
+
+        <!-- Remember Me + Forgot Password -->
+        <div class="form-row">
+          <label class="remember-label">
+            <input type="checkbox" formControlName="remember" class="remember-check" />
+            <span class="check-custom"></span>
+            Remember Me
+          </label>
+          <a href="#" class="forgot-link" (click)="onForgot($event)">Forgot Password?</a>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="submit-btn" [class.loading]="loading" routerLink="/home">
+          <span *ngIf="!loading">Sign In</span>
+          <span *ngIf="loading" class="spinner"></span>
+          <svg *ngIf="!loading" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </button>
+
+      </form>
+
+      <!-- Divider -->
+      <div class="divider"><span>Or Sign In With</span></div>
+
+      <!-- Social Buttons -->
+      <div class="social-row">
+        <button class="social-btn" type="button" (click)="signInWith('google')">
+          <!-- Google SVG logo -->
+          <svg width="20" height="20" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          Google
+        </button>
+
+        <button class="social-btn" type="button" (click)="signInWith('facebook')">
+          <!-- Facebook icon -->
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2">
+            <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.235 2.686.235v2.97h-1.513c-1.491 0-1.956.93-1.956 1.887v2.255h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
+          </svg>
+          Facebook
+        </button>
+      </div>
+
+      <!-- Sign Up Link -->
+      <p class="switch-link">
+        Don't have an account?
+        <a href="#" class="switch-anchor" (click)="goToSignUp($event)">Sign Up</a>
+      </p>
+
+    </div>
+  </div>
+</div>
