@@ -4,10 +4,11 @@ import { RegisterationPage } from "../components/registeration-page/registeratio
 import { Header } from "../components/header/header";
 import { Maintitle } from "../components/maintitle/maintitle";
 import { SignUp } from '../components/sign-up/sign-up';
+import { Footer } from '../components/footer/footer';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RegisterationPage, Header, Maintitle,SignUp],
+  imports: [RouterOutlet, RegisterationPage, Header, Maintitle,SignUp,Footer],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

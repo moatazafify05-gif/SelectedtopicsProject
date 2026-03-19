@@ -8,4 +8,7 @@ import { Component } from '@angular/core';
 })
 export class Footer {
 
+
+
+  currentYear: number = new Date().getFullYear(); // عشان يكتب السنة الحالية لوحده
 }
