@@ -44,7 +44,7 @@ this.buildings = [
   }
 ]
 }
-  /** Show the Date column if ANY hall has a date-picker status */
+  
   get showDateCol(): boolean {
     return this.buildings.some(build => build.halls.some(h => h.status !== 'date'));
   }
