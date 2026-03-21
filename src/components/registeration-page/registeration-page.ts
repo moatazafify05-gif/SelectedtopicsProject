@@ -40,10 +40,28 @@ this.buildings = [
     {name: 'Hall 3', status: 'available', capacity: 200, id: 3},
   ]
 
-  }
+  },
+  {name: 'Civil "12"', id: 4, imageUrl: '../../assets/civilBuilding.jpeg', globalDate: '2024-07-01', halls: [
+    {name: 'Hall 1', status: 'available', capacity: 100, id: 1},
+    {name: 'Hall 2', status: 'available', capacity: 50, id: 2},
+    {name: 'Hall 3', status: 'available', capacity: 200, id: 3},
 ]
+},
+{name: 'Electrical "16"', id: 5, imageUrl: '../../assets/electricalBuilding.jpeg', globalDate: '2024-07-01',
+   halls: [
+  {name: 'Hall 1', status: 'available', capacity: 100, id: 1},
+  {name: 'Hall 2', status: 'available', capacity: 50, id: 2},
+  {name: 'Hall 3', status: 'available', capacity: 200, id: 3},
+]
+},
+{name: 'credit "2"', id: 6, imageUrl: '../../assets/creditBuilding.jpeg', globalDate: '2024-07-01', halls: [
+  {name: 'Hall 1', status: 'available', capacity: 100, id: 1},
+  {name: 'Hall 2', status: 'available', capacity: 50, id: 2},
+  {name: 'Hall 3', status: 'available', capacity: 200, id: 3},
+]
+}];
+
 }
-  
   get showDateCol(): boolean {
     return this.buildings.some(build => build.halls.some(h => h.status !== 'date'));
   }
