@@ -117,25 +117,25 @@ onReserve(hall: any, selectedTime: string) {
   const to = endTime.toLocaleTimeString('en-US', timeOptions);
 
   alert(`Reserved successfully!\nFrom: ${from}\nTo: ${to}`);
-  // ... (ده الكود القديم بتاع التشيك ومنع التداخل) ...
+// السطر ده بيعمل رقم عشوائي من 4 أرقام (مثال: 5823)
+    const randomCode = Math.floor(1000 + Math.random() * 9000);
 
-  // الكود الجديد اللي هيبعت للـ Firebase
-  // هنبعت الداتا للمسار اللي إنت مجهزه outputs/digital
-  const dbRef = ref(this.db,'board1/outputs/digital');
+    // بنحدد المسار بتاع الداتابيز
+    const dbRef = ref(this.db, 'board1/outputs/digital');
 
-  // هنحدث البيانات بالقيم دي (تقدر تعدلها زي ما تحب)
-  set(dbRef, {
-    reserved: true,
-    name: "Hall Reservation", // ممكن نخليها اسم القاعة hall.name لو عندك
-    time: selectedTime
-  })
-  .then(() => {
-    console.log('تم إرسال الحجز للفايربيز بنجاح! 🚀');
-  })
-  .catch((error) => {
-    console.error('حصلت مشكلة في إرسال البيانات:', error);
-  });
-
+    // بنبعت الداتا الجديدة متضاف ليها الكود
+    set(dbRef, {
+      reserved: true,
+      "reservation-code": randomCode, // الكود العشوائي اللي اتعمل هيتبعت هنا
+      name: hall.name || "Hall Reservation",
+    })
+    .then(() => {
+      console.log('تم إرسال الحجز للفايربيز بنجاح! كود الحجز:', randomCode);
+      // ممكن لو حابب تطلع الكود ده في الـ alert لليوزر، تعدل الـ alert وتضيفه فيها
+    })
+    .catch((error) => {
+      console.error('حصلت مشكلة في إرسال البيانات:', error);
+    });
 }
   onReserveAll(): void {
     alert(`Opening reservation form for ${this.buildings[0].name}`);
