@@ -1,4 +1,4 @@
-import { Component, Input ,OnInit} from '@angular/core';
+import { Component, Input ,OnInit,ChangeDetectorRef} from '@angular/core';
 import { HallCharacteristics } from '../../models/hall-characteristics';
 import { Hall } from '../../models/hall';
 import { FormsModule } from '@angular/forms';
@@ -19,17 +19,17 @@ export class RegisterationPage {
 
   sortedHalls: Hall[] = [];
   sortAsc = true;
-constructor(private db: Database) {
+constructor(private db: Database, private cdr: ChangeDetectorRef) {
 this.buildings = [
   {name: 'Mechanics "17"', id: 1, imageUrl: '../../assets/mechanika-photo.jpeg', globalDate: '2024-07-01', halls: [
-    {name: 'Hall 1', status: 'available', capacity: 100, id: 1},
+    {name: 'Hall 1 mec', status: 'available', capacity: 100, id: 1},
     {name: 'Hall 2', status: 'available', capacity: 50,  id: 2},
     {name: 'Hall 3', status: 'available', capacity: 200, id: 3},
   ]
 
   }
   ,{name: 'Architecture "3"', id: 2, imageUrl: '../../assets/omarabuilding-photo.jpeg', globalDate: '2024-07-01', halls: [
-    {name: 'Hall 1', status: 'available', capacity: 100, id: 1},
+    {name: 'Hall 1 arc', status: 'available', capacity: 100, id: 1},
     {name: 'Hall 2', status: 'available', capacity: 50, id: 2},
     {name: 'Hall 3', status: 'available', capacity: 200, id: 3},
   ]
@@ -43,20 +43,20 @@ this.buildings = [
 
   },
   {name: 'Civil "12"', id: 4, imageUrl: '../../assets/civilBuilding.jpeg', globalDate: '2024-07-01', halls: [
-    {name: 'Hall 1', status: 'available', capacity: 100, id: 1},
+    {name: 'Hall 1 cv', status: 'available', capacity: 100, id: 1},
     {name: 'Hall 2', status: 'available', capacity: 50, id: 2},
     {name: 'Hall 3', status: 'available', capacity: 200, id: 3},
 ]
 },
 {name: 'Electrical "16"', id: 5, imageUrl: '../../assets/electricalBuilding.jpeg', globalDate: '2024-07-01',
     halls: [
-  {name: 'Hall 1', status: 'available', capacity: 100, id: 1},
+  {name: 'Hall 1 el', status: 'available', capacity: 100, id: 1},
   {name: 'Hall 2', status: 'available', capacity: 50, id: 2},
   {name: 'Hall 3', status: 'available', capacity: 200, id: 3},
 ]
 },
 {name: 'credit "2"', id: 6, imageUrl: '../../assets/creditBuilding.jpeg', globalDate: '2024-07-01', halls: [
-  {name: 'Hall 1', status: 'available', capacity: 100, id: 1},
+  {name: 'Hall 1 c', status: 'available', capacity: 100, id: 1},
   {name: 'Hall 2', status: 'available', capacity: 50, id: 2},
   {name: 'Hall 3', status: 'available', capacity: 200, id: 3},
 ]
@@ -67,35 +67,45 @@ this.buildings = [
     return this.buildings.some(build => build.halls.some(h => h.status !== 'date'));
   }
 
-  ngOnInit(): void {
-    this.sortedHalls = [...this.buildings[0].halls];
 
 
-    const dbRef = ref(this.db, 'board1/outputs/digital');
 
+    ngOnInit(): void {
+  // تعريف القاعات المبدئية
+  this.sortedHalls = [...this.buildings[0].halls];
 
-    onValue(dbRef, (snapshot) => {
-      const data = snapshot.val();
+  // تحديد مسار قاعدة البيانات
+  const dbRef = ref(this.db, 'board1/outputs/digital');
 
+  // مراقبة الداتا
+  onValue(dbRef, (snapshot) => {
+    const data = snapshot.val();
 
-      if (data && data.reserved === true) {
-
-
-        this.buildings.forEach(building => {
-          building.halls.forEach(hall => {
-
-
-            if (hall.name === data.name || hall.name === "Digital") {
-              hall.status = 'reserved';
-            }
-
-          });
-        });
-      }
+    // 1. نرجع كل القاعات لحالة 'available' كوضع افتراضي عشان لو لغيت الحجز
+    this.buildings.forEach(building => {
+      building.halls.forEach(hall => {
+        hall.status = 'available';
+      });
     });
 
+    // 2. لو في حجز موجود في الفايربيز، نغير حالة القاعة المطلوبة لـ 'reserved'
+    if (data && data.reserved === true) {
+      this.buildings.forEach(building => {
+        building.halls.forEach(hall => {
+          if (hall.name === data.name || hall.name === "Digital") {
+            hall.status = 'reserved';
+          }
+        });
+      });
+    }
 
-  }
+    // 3. السطر السحري اللي بيخلي الأنجولار يحدّث الشاشة فوراً بعد الريفرش!
+    this.cdr.detectChanges();
+  });
+}
+
+
+
 
   toggleSort(): void {
     this.sortAsc = !this.sortAsc;
