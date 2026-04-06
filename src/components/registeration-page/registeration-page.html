@@ -61,7 +61,7 @@
             </ng-container>
 
             <!-- Booked -->
-            <ng-container *ngIf="hall.status === 'booked'">
+            <ng-container *ngIf="hall.status === 'reserved'">
               <span class="status-dot booked"></span>
               <span class="status-label booked">Booked</span>
             </ng-container>
@@ -78,11 +78,11 @@
   </div>
 
   <ng-container *ngIf="hall.status !== 'date'">
-    <button *ngIf="hall.status !== 'booked'" class="reserve-btn" (click)="onReserve(hall, selectedTime.value)">
+    <button *ngIf="hall.status !== 'reserved'" class="reserve-btn" (click)="onReserve(hall, selectedTime.value)">
       Reserve
     </button>
 
-    <button *ngIf="hall.status === 'booked'" class="reserve-btn" style="opacity: 0.5; cursor: not-allowed;" disabled>
+    <button *ngIf="hall.status === 'reserved'" class="reserve-btn" style="opacity: 0.5; cursor: not-allowed;" disabled>
       Booked
     </button>
   </ng-container>
