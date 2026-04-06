@@ -4,7 +4,7 @@ import { Hall } from '../../models/hall';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
-
+import { Database,ref,set } from '@angular/fire/database';
 
 @Component({
   selector: 'app-registeration-page',
@@ -18,7 +18,7 @@ export class RegisterationPage {
 
   sortedHalls: Hall[] = [];
   sortAsc = true;
-constructor() {
+constructor(private db: Database) {
 this.buildings = [
   {name: 'Mechanics "17"', id: 1, imageUrl: '../../assets/mechanika-photo.jpeg', globalDate: '2024-07-01', halls: [
     {name: 'Hall 1', status: 'available', capacity: 100, id: 1},
@@ -43,7 +43,7 @@ this.buildings = [
   }
 ]
 }
-  
+
   get showDateCol(): boolean {
     return this.buildings.some(build => build.halls.some(h => h.status !== 'date'));
   }
@@ -87,7 +87,13 @@ onReserve(hall: any, selectedTime: string) {
     const diffInMs = Math.abs(reservationDate.getTime() - bookedTime.getTime());
     const diffInHours = diffInMs / (1000 * 60 * 60);
     return diffInHours < 2;
-  });
+  }
+
+
+
+
+
+);
 
   if (isOverlapping) {
     alert('This slot is unavailable. Each reservation needs a 2-hour window.');
@@ -110,6 +116,24 @@ onReserve(hall: any, selectedTime: string) {
   const to = endTime.toLocaleTimeString('en-US', timeOptions);
 
   alert(`Reserved successfully!\nFrom: ${from}\nTo: ${to}`);
+ // السطر ده بيعمل رقم عشوائي من 4 أرقام (مثال: 5823)
+    const randomCode = Math.floor(1000 + Math.random() * 9000);
+
+    // بنحدد المسار بتاع الداتابيز
+    const dbRef = ref(this.db, 'board1/outputs/digital');
+
+    // بنبعت الداتا الجديدة متضاف ليها الكود
+    set(dbRef, {
+      reserved: true,
+      "reservation-code": randomCode, // الكود العشوائي اللي اتعمل هيتبعت هنا
+    })
+    .then(() => {
+      console.log('تم إرسال الحجز للفايربيز بنجاح! كود الحجز:', randomCode);
+      // ممكن لو حابب تطلع الكود ده في الـ alert لليوزر، تعدل الـ alert وتضيفه فيها
+    })
+    .catch((error) => {
+      console.error('حصلت مشكلة في إرسال البيانات:', error);
+    });
 }
   onReserveAll(): void {
     alert(`Opening reservation form for ${this.buildings[0].name}`);
