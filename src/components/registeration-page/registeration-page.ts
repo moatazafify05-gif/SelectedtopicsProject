@@ -8,6 +8,7 @@ import { Database,ref,set } from '@angular/fire/database';
 
 @Component({
   selector: 'app-registeration-page',
+  standalone: true,
   imports: [FormsModule,CommonModule],
   templateUrl: './registeration-page.html',
   styleUrl: './registeration-page.css',
