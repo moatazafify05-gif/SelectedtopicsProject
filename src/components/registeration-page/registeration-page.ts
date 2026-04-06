@@ -41,6 +41,7 @@ this.buildings = [
   ]
 
   }
+
 ]
 }
 
