@@ -4,7 +4,7 @@ import { Hall } from '../../models/hall';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
-
+import { Database,ref,set } from '@angular/fire/database';
 
 @Component({
   selector: 'app-registeration-page',
@@ -18,7 +18,7 @@ export class RegisterationPage {
 
   sortedHalls: Hall[] = [];
   sortAsc = true;
-constructor() {
+constructor(private db: Database) {
 this.buildings = [
   {name: 'Mechanics "17"', id: 1, imageUrl: '../../assets/mechanika-photo.jpeg', globalDate: '2024-07-01', halls: [
     {name: 'Hall 1', status: 'available', capacity: 100, id: 1},
@@ -40,28 +40,11 @@ this.buildings = [
     {name: 'Hall 3', status: 'available', capacity: 200, id: 3},
   ]
 
-  },
-  {name: 'Civil "12"', id: 4, imageUrl: '../../assets/civilBuilding.jpeg', globalDate: '2024-07-01', halls: [
-    {name: 'Hall 1', status: 'available', capacity: 100, id: 1},
-    {name: 'Hall 2', status: 'available', capacity: 50, id: 2},
-    {name: 'Hall 3', status: 'available', capacity: 200, id: 3},
-]
-},
-{name: 'Electrical "16"', id: 5, imageUrl: '../../assets/electricalBuilding.jpeg', globalDate: '2024-07-01',
-   halls: [
-  {name: 'Hall 1', status: 'available', capacity: 100, id: 1},
-  {name: 'Hall 2', status: 'available', capacity: 50, id: 2},
-  {name: 'Hall 3', status: 'available', capacity: 200, id: 3},
-]
-},
-{name: 'credit "2"', id: 6, imageUrl: '../../assets/creditBuilding.jpeg', globalDate: '2024-07-01', halls: [
-  {name: 'Hall 1', status: 'available', capacity: 100, id: 1},
-  {name: 'Hall 2', status: 'available', capacity: 50, id: 2},
-  {name: 'Hall 3', status: 'available', capacity: 200, id: 3},
-]
-}];
+  }
 
+]
 }
+
   get showDateCol(): boolean {
     return this.buildings.some(build => build.halls.some(h => h.status !== 'date'));
   }
@@ -105,7 +88,13 @@ onReserve(hall: any, selectedTime: string) {
     const diffInMs = Math.abs(reservationDate.getTime() - bookedTime.getTime());
     const diffInHours = diffInMs / (1000 * 60 * 60);
     return diffInHours < 2;
-  });
+  }
+
+
+
+
+
+);
 
   if (isOverlapping) {
     alert('This slot is unavailable. Each reservation needs a 2-hour window.');
@@ -128,6 +117,25 @@ onReserve(hall: any, selectedTime: string) {
   const to = endTime.toLocaleTimeString('en-US', timeOptions);
 
   alert(`Reserved successfully!\nFrom: ${from}\nTo: ${to}`);
+  // ... (ده الكود القديم بتاع التشيك ومنع التداخل) ...
+
+  // الكود الجديد اللي هيبعت للـ Firebase
+  // هنبعت الداتا للمسار اللي إنت مجهزه outputs/digital
+  const dbRef = ref(this.db,'board1/outputs/digital');
+
+  // هنحدث البيانات بالقيم دي (تقدر تعدلها زي ما تحب)
+  set(dbRef, {
+    reserved: true,
+    name: "Hall Reservation", // ممكن نخليها اسم القاعة hall.name لو عندك
+    time: selectedTime
+  })
+  .then(() => {
+    console.log('تم إرسال الحجز للفايربيز بنجاح! 🚀');
+  })
+  .catch((error) => {
+    console.error('حصلت مشكلة في إرسال البيانات:', error);
+  });
+
 }
   onReserveAll(): void {
     alert(`Opening reservation form for ${this.buildings[0].name}`);
