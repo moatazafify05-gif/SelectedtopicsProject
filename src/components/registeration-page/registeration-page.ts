@@ -1,9 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input ,OnInit} from '@angular/core';
 import { HallCharacteristics } from '../../models/hall-characteristics';
 import { Hall } from '../../models/hall';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Database,ref,set } from '@angular/fire/database';
+import { Database,ref,set,onValue } from '@angular/fire/database';
 
 
 @Component({
@@ -69,6 +69,32 @@ this.buildings = [
 
   ngOnInit(): void {
     this.sortedHalls = [...this.buildings[0].halls];
+
+
+    const dbRef = ref(this.db, 'board1/outputs/digital');
+
+
+    onValue(dbRef, (snapshot) => {
+      const data = snapshot.val();
+
+
+      if (data && data.reserved === true) {
+
+
+        this.buildings.forEach(building => {
+          building.halls.forEach(hall => {
+
+
+            if (hall.name === data.name || hall.name === "Digital") {
+              hall.status = 'reserved';
+            }
+
+          });
+        });
+      }
+    });
+
+
   }
 
   toggleSort(): void {
@@ -80,6 +106,10 @@ this.buildings = [
       return this.sortAsc ? ai - bi : bi - ai;
     });
   }
+
+
+
+
 
 
 onReserve(hall: any, selectedTime: string) {
