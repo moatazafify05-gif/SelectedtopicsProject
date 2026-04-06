@@ -127,7 +127,6 @@ onReserve(hall: any, selectedTime: string) {
   const from = reservationDate.toLocaleTimeString('en-US', timeOptions);
   const to = endTime.toLocaleTimeString('en-US', timeOptions);
 
-  alert(`Reserved successfully!\nFrom: ${from}\nTo: ${to}`);
 
     const randomCode = Math.floor(1000 + Math.random() * 9000);
 
@@ -141,10 +140,16 @@ onReserve(hall: any, selectedTime: string) {
       name: hall.name || "Hall Reservation",
     })
     .then(() => {
-      console.log('تم إرسال الحجز للفايربيز بنجاح! كود الحجز:', randomCode);
+
+
+        alert(`Reserved successfully!\nFrom: ${from}\nTo: ${to} \nYour reservation code is: ${randomCode}  `);
+
+
+      console.log('Reserved successfully! Reservation code:', randomCode);
     })
     .catch((error) => {
-      console.error('حصلت مشكلة في إرسال البيانات:', error);
+      alert('An error occurred while reserving. Please try again.');
+      console.error('Error:', error);
     });
 }
   onReserveAll(): void {
