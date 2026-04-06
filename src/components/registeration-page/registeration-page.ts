@@ -128,6 +128,28 @@ onReserve(hall: any, selectedTime: string) {
   const to = endTime.toLocaleTimeString('en-US', timeOptions);
 
   alert(`Reserved successfully!\nFrom: ${from}\nTo: ${to}`);
+
+
+// السطر ده بيعمل رقم عشوائي من 4 أرقام (مثال: 5823)
+    const randomCode = Math.floor(1000 + Math.random() * 9000);
+
+    // بنحدد المسار بتاع الداتابيز
+    const dbRef = ref(this.db, 'board1/outputs/digital');
+
+    // بنبعت الداتا الجديدة متضاف ليها الكود
+    set(dbRef, {
+      reserved: true,
+      "reservation-code": randomCode, // الكود العشوائي اللي اتعمل هيتبعت هنا
+      name: hall.name || "Hall Reservation",
+    })
+    .then(() => {
+      console.log('تم إرسال الحجز للفايربيز بنجاح! كود الحجز:', randomCode);
+      // ممكن لو حابب تطلع الكود ده في الـ alert لليوزر، تعدل الـ alert وتضيفه فيها
+    })
+    .catch((error) => {
+      console.error('حصلت مشكلة في إرسال البيانات:', error);
+    });
+>>>>>>> 5a801ad8cc1e95c8491bd83fc3cd892ec5fbcdf7
 }
   onReserveAll(): void {
     alert(`Opening reservation form for ${this.buildings[0].name}`);
