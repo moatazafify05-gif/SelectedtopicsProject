@@ -3,7 +3,7 @@ import { HallCharacteristics } from '../../models/hall-characteristics';
 import { Hall } from '../../models/hall';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
+import { Database,ref,set } from '@angular/fire/database';
 
 
 @Component({
@@ -18,7 +18,7 @@ export class RegisterationPage {
 
   sortedHalls: Hall[] = [];
   sortAsc = true;
-constructor() {
+constructor(private db: Database) {
 this.buildings = [
   {name: 'Mechanics "17"', id: 1, imageUrl: '../../assets/mechanika-photo.jpeg', globalDate: '2024-07-01', halls: [
     {name: 'Hall 1', status: 'available', capacity: 100, id: 1},
@@ -48,7 +48,7 @@ this.buildings = [
 ]
 },
 {name: 'Electrical "16"', id: 5, imageUrl: '../../assets/electricalBuilding.jpeg', globalDate: '2024-07-01',
-   halls: [
+    halls: [
   {name: 'Hall 1', status: 'available', capacity: 100, id: 1},
   {name: 'Hall 2', status: 'available', capacity: 50, id: 2},
   {name: 'Hall 3', status: 'available', capacity: 200, id: 3},
@@ -129,27 +129,23 @@ onReserve(hall: any, selectedTime: string) {
 
   alert(`Reserved successfully!\nFrom: ${from}\nTo: ${to}`);
 
-
-// السطر ده بيعمل رقم عشوائي من 4 أرقام (مثال: 5823)
     const randomCode = Math.floor(1000 + Math.random() * 9000);
 
-    // بنحدد المسار بتاع الداتابيز
+
     const dbRef = ref(this.db, 'board1/outputs/digital');
 
-    // بنبعت الداتا الجديدة متضاف ليها الكود
+
     set(dbRef, {
       reserved: true,
-      "reservation-code": randomCode, // الكود العشوائي اللي اتعمل هيتبعت هنا
+      "reservation-code": randomCode,
       name: hall.name || "Hall Reservation",
     })
     .then(() => {
       console.log('تم إرسال الحجز للفايربيز بنجاح! كود الحجز:', randomCode);
-      // ممكن لو حابب تطلع الكود ده في الـ alert لليوزر، تعدل الـ alert وتضيفه فيها
     })
     .catch((error) => {
       console.error('حصلت مشكلة في إرسال البيانات:', error);
     });
->>>>>>> 5a801ad8cc1e95c8491bd83fc3cd892ec5fbcdf7
 }
   onReserveAll(): void {
     alert(`Opening reservation form for ${this.buildings[0].name}`);
