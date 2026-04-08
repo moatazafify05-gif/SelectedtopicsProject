@@ -5,12 +5,15 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Database,ref,set,onValue,get } from '@angular/fire/database';
 import Swal from 'sweetalert2';
+import { RegisterationService } from '../../services/registeration-service';
+import { TimeRegistrationComponent } from '../time-registeration/time-registeration';
+import { RouterLink } from "@angular/router";
 
 
 @Component({
   selector: 'app-registeration-page',
   standalone: true,
-  imports: [FormsModule,CommonModule],
+  imports: [FormsModule, CommonModule, RouterLink],
   templateUrl: './registeration-page.html',
   styleUrl: './registeration-page.css',
 })
@@ -21,48 +24,8 @@ export class RegisterationPage {
   sortedHalls: Hall[] = [];
   sortAsc = true;
   reserveDate:string[] = [];
-constructor(private db: Database, private cdr: ChangeDetectorRef) {
-this.buildings = [
-  {name: 'Mechanics "17"', id: 1, imageUrl: '../../assets/mechanika-photo.jpeg', globalDate: '2024-07-01', halls: [
-    {name: 'Hall17101', status: 'available', capacity: 100, id: 1},
-    {name: 'Hall17102', status: 'available', capacity: 50,  id: 2},
-    {name: 'Hall17103', status: 'available', capacity: 200, id: 3},
-  ]
-
-  }
-  ,{name: 'Architecture "3"', id: 2, imageUrl: '../../assets/omarabuilding-photo.jpeg', globalDate: '2024-07-01', halls: [
-    {name: 'Hall 3001', status: 'available', capacity: 100, id: 1},
-    {name: 'Hall 3002', status: 'available', capacity: 50, id: 2},
-    {name: 'Hall 3003', status: 'available', capacity: 200, id: 3},
-  ]
-
-  },
-  {name: 'Mechanics "18"', id: 3, imageUrl: '../../assets/mechanika2-photo.jpeg', globalDate: '2024-07-01', halls: [
-    {name: 'Hall18101', status: 'available', capacity: 100, id: 1},
-    {name: 'Hall18102', status: 'available', capacity: 50, id: 2},
-    {name: 'Hall18103', status: 'available', capacity: 200, id: 3},
-  ]
-
-  },
-  {name: 'Civil "12"', id: 4, imageUrl: '../../assets/civilBuilding.jpeg', globalDate: '2024-07-01', halls: [
-    {name: 'Hall 12001', status: 'available', capacity: 100, id: 1},
-    {name: 'Hall 12002', status: 'available', capacity: 50, id: 2},
-    {name: 'Hall 12003', status: 'available', capacity: 200, id: 3},
-]
-},
-{name: 'Electrical "16"', id: 5, imageUrl: '../../assets/electricalBuilding.jpeg', globalDate: '2024-07-01',
-    halls: [
-  {name: 'Hall 16101', status: 'available', capacity: 100, id: 1},
-  {name: 'Hall 16102', status: 'available', capacity: 50, id: 2},
-  {name: 'Hall 16103', status: 'available', capacity: 200, id: 3},
-]
-},
-{name: 'credit "2"', id: 6, imageUrl: '../../assets/creditBuilding.jpeg', globalDate: '2024-07-01', halls: [
-  {name: 'Hall 20101', status: 'available', capacity: 100, id: 1},
-  {name: 'Hall 20102', status: 'available', capacity: 50, id: 2},
-  {name: 'Hall 20103', status: 'available', capacity: 200, id: 3},
-]
-}];
+constructor(private db: Database, private cdr: ChangeDetectorRef, private registerationService: RegisterationService) {
+this.buildings = this.registerationService.buildings;
 
 }
   get showDateCol(): boolean {
@@ -99,7 +62,7 @@ this.buildings = [
     if (data && data.reserved === true) {
       this.buildings.forEach(building => {
         building.halls.forEach(hall => {
-          if (hall.name === data.name || hall.name === "Digital") {
+          if (hall.hallname === data.name || hall.hallname === "Digital") {
             hall.status = 'reserved';
           }
         });
@@ -110,7 +73,7 @@ this.buildings = [
       this.buildings.forEach(building => {
     building.halls.forEach(hall => {
       // ✅ إضافة شرط للتأكد من أننا نضع المواعيد في القاعة الصحيحة فقط
-      if (hall.name === data.name) {
+      if (hall.hallname === data.name) {
         hall.reservedDates = timeData || [];}});
       });
     });

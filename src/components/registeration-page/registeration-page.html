@@ -40,7 +40,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let hall of build.halls" class="styl2">
-              <td class="hall-name">{{ hall.name }}</td>
+              <td class="hall-name">{{ hall.hallname }}</td>
               <td class="capacity-cell">
                 <svg
                   class="cap-icon"
@@ -93,7 +93,7 @@
 
               <td *ngIf="showDateCol" class="date-cell" style="padding-left: 25px">
                 <div style="margin-bottom: 8px">
-                  <input
+                  <!-- <input
                     #selectedTime
                     type="datetime-local"
                     style="
@@ -106,14 +106,15 @@
                       cursor: pointer;
                       outline: none;
                     "
-                  />
+                  /> -->
                 </div>
 
                 <ng-container *ngIf="hall.status !== 'date'">
                   <button
                     *ngIf="hall.status !== 'reserved'"
                     class="reserve-btn"
-                    (click)="onReserve(hall, selectedTime.value)"
+
+                    routerLink="/home/time-registration"
                   >
                     Reserve
                   </button>

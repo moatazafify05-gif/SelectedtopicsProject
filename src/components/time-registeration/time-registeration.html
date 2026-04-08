@@ -1,0 +1,145 @@
+<h2 class="sr-only">Time Registration Component</h2>
+
+<!-- ── Trigger Buttons (one per hall) ─────────────────── -->
+<div class="halls-grid">
+  <div class="hall-card" *ngFor="let hall of sortedHalls">
+    <div class="hall-info">
+      <span class="hall-name">{{ hall.hallname }}</span>
+      <span class="status-badge" [ngClass]="hall.status">{{ hall.status }}</span>
+    </div>
+    <!-- <button
+      class="register-btn"
+      [class.fully-booked]="hall.status === 'reserved'"
+      [disabled]="hall.status === 'reserved'"
+      (click)="openModal(hall)"
+    >
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <rect x="0.5" y="1.5" width="13" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M4 0.5v2M10 0.5v2M0.5 4.5h13" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        <circle cx="4.5" cy="8.5" r="0.9" fill="currentColor"/>
+        <circle cx="7" cy="8.5" r="0.9" fill="currentColor"/>
+        <circle cx="9.5" cy="8.5" r="0.9" fill="currentColor"/>
+      </svg>
+      {{ hall.status === 'reserved' ? 'Fully Booked' : 'Register Time' }}
+    </button> -->
+  </div>
+</div>
+
+
+<!-- ── Modal Overlay ──────────────────────────────────── -->
+<div class="overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+
+    <!-- Header -->
+    <div class="modal-header">
+      <div class="header-icon">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <rect x="1" y="2.5" width="16" height="14.5" rx="2.5" stroke="currentColor" stroke-width="1.4"/>
+          <path d="M5.5 1v3M12.5 1v3M1 7h16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          <circle cx="6" cy="12" r="1.1" fill="currentColor"/>
+          <circle cx="9" cy="12" r="1.1" fill="currentColor"/>
+          <circle cx="12" cy="12" r="1.1" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="header-text">
+        <p class="modal-title">Reserve a Time Slot</p>
+        <p class="modal-subtitle">{{ activeHall?.hallname }} &nbsp;·&nbsp; 08:00 AM – 03:00 PM</p>
+      </div>
+      <button class="close-btn" (click)="closeModal()" routerLink="/home">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="modal-body">
+
+      <!-- Date -->
+      <div class="field">
+        <label class="field-label">Date</label>
+        <input
+          type="date"
+          class="field-input"
+          [(ngModel)]="selectedDate"
+          [min]="today"
+        />
+      </div>
+
+      <!-- Time Row -->
+      <div class="time-row">
+        <div class="field">
+          <label class="field-label">Start time</label>
+          <input
+            type="time"
+            class="field-input"
+            [(ngModel)]="startTime"
+            min="08:00"
+            max="15:00"
+          />
+        </div>
+        <div class="field">
+          <label class="field-label">End time</label>
+          <input
+            type="time"
+            class="field-input"
+            [(ngModel)]="endTime"
+            min="08:00"
+            max="15:00"
+          />
+        </div>
+      </div>
+
+      <!-- Inline Validation Error -->
+      <div class="error-box" *ngIf="validationMessage">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="flex-shrink:0">
+          <circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M6.5 3.5v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          <circle cx="6.5" cy="9.5" r="0.7" fill="currentColor"/>
+        </svg>
+        <span>{{ validationMessage }}</span>
+      </div>
+
+      <!-- Summary -->
+      <div class="summary-card" *ngIf="isFormValid">
+        <div class="summary-row">
+          <span class="sum-label">Date</span>
+          <span class="sum-value">{{ formatDate(selectedDate) }}</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-row">
+          <span class="sum-label">From</span>
+          <span class="sum-value">{{ formatTime12(startTime) }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="sum-label">To</span>
+          <span class="sum-value">{{ formatTime12(endTime) }}</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-row">
+          <span class="sum-label">Duration</span>
+          <span class="sum-value duration-badge">{{ duration }}</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeModal()" routerLink="/home">Cancel</button>
+      <button
+        class="btn-confirm"
+        [disabled]="!isFormValid"
+        (click)="confirmReservation()"
+
+        routerLink="/home"
+      >
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px">
+          <path d="M2 7l4 4 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Confirm Reservation
+      </button>
+    </div>
+
+  </div>
+</div>

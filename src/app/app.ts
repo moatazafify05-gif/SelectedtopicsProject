@@ -3,10 +3,11 @@ import { RouterOutlet } from '@angular/router';
 import { RegisterationPage } from "../components/registeration-page/registeration-page";
 import { Header } from "../components/header/header";
 import { Maintitle } from "../components/maintitle/maintitle";
+import { TimeRegistrationComponent } from '../components/time-registeration/time-registeration';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RegisterationPage, Header, Maintitle],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

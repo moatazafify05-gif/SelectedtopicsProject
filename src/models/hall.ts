@@ -1,5 +1,5 @@
 export interface Hall {
-  name: string;
+  hallname: string;
   status: 'available' | 'date' | 'reserved';
   capacity: number;
   date?: string; // Only for 'date' status
