@@ -24,43 +24,43 @@ export class RegisterationPage {
 constructor(private db: Database, private cdr: ChangeDetectorRef) {
 this.buildings = [
   {name: 'Mechanics "17"', id: 1, imageUrl: '../../assets/mechanika-photo.jpeg', globalDate: '2024-07-01', halls: [
-    {name: 'Hall 1 mec', status: 'available', capacity: 100, id: 1},
-    {name: 'Hall 2', status: 'available', capacity: 50,  id: 2},
-    {name: 'Hall 3', status: 'available', capacity: 200, id: 3},
+    {name: 'Hall17101', status: 'available', capacity: 100, id: 1},
+    {name: 'Hall17102', status: 'available', capacity: 50,  id: 2},
+    {name: 'Hall17103', status: 'available', capacity: 200, id: 3},
   ]
 
   }
   ,{name: 'Architecture "3"', id: 2, imageUrl: '../../assets/omarabuilding-photo.jpeg', globalDate: '2024-07-01', halls: [
-    {name: 'Hall 1 arc', status: 'available', capacity: 100, id: 1},
-    {name: 'Hall 2', status: 'available', capacity: 50, id: 2},
-    {name: 'Hall 3', status: 'available', capacity: 200, id: 3},
+    {name: 'Hall 3001', status: 'available', capacity: 100, id: 1},
+    {name: 'Hall 3002', status: 'available', capacity: 50, id: 2},
+    {name: 'Hall 3003', status: 'available', capacity: 200, id: 3},
   ]
 
   },
   {name: 'Mechanics "18"', id: 3, imageUrl: '../../assets/mechanika2-photo.jpeg', globalDate: '2024-07-01', halls: [
-    {name: 'Hall 1', status: 'available', capacity: 100, id: 1},
-    {name: 'Hall 2', status: 'available', capacity: 50, id: 2},
-    {name: 'Hall 3', status: 'available', capacity: 200, id: 3},
+    {name: 'Hall18101', status: 'available', capacity: 100, id: 1},
+    {name: 'Hall18102', status: 'available', capacity: 50, id: 2},
+    {name: 'Hall18103', status: 'available', capacity: 200, id: 3},
   ]
 
   },
   {name: 'Civil "12"', id: 4, imageUrl: '../../assets/civilBuilding.jpeg', globalDate: '2024-07-01', halls: [
-    {name: 'Hall 1 cv', status: 'available', capacity: 100, id: 1},
-    {name: 'Hall 2', status: 'available', capacity: 50, id: 2},
-    {name: 'Hall 3', status: 'available', capacity: 200, id: 3},
+    {name: 'Hall 12001', status: 'available', capacity: 100, id: 1},
+    {name: 'Hall 12002', status: 'available', capacity: 50, id: 2},
+    {name: 'Hall 12003', status: 'available', capacity: 200, id: 3},
 ]
 },
 {name: 'Electrical "16"', id: 5, imageUrl: '../../assets/electricalBuilding.jpeg', globalDate: '2024-07-01',
     halls: [
-  {name: 'Hall 1 el', status: 'available', capacity: 100, id: 1},
-  {name: 'Hall 2', status: 'available', capacity: 50, id: 2},
-  {name: 'Hall 3', status: 'available', capacity: 200, id: 3},
+  {name: 'Hall 16101', status: 'available', capacity: 100, id: 1},
+  {name: 'Hall 16102', status: 'available', capacity: 50, id: 2},
+  {name: 'Hall 16103', status: 'available', capacity: 200, id: 3},
 ]
 },
 {name: 'credit "2"', id: 6, imageUrl: '../../assets/creditBuilding.jpeg', globalDate: '2024-07-01', halls: [
-  {name: 'Hall 1 c', status: 'available', capacity: 100, id: 1},
-  {name: 'Hall 2', status: 'available', capacity: 50, id: 2},
-  {name: 'Hall 3', status: 'available', capacity: 200, id: 3},
+  {name: 'Hall 20101', status: 'available', capacity: 100, id: 1},
+  {name: 'Hall 20102', status: 'available', capacity: 50, id: 2},
+  {name: 'Hall 20103', status: 'available', capacity: 200, id: 3},
 ]
 }];
 
