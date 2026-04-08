@@ -6,4 +6,5 @@ export interface HallCharacteristics {
   imageUrl: string;
   globalDate: string;
   halls: Hall[];
+   // Add this property to store reserved dates for each hall
 }
