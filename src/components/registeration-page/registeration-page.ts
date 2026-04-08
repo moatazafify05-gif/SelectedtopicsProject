@@ -110,6 +110,23 @@ this.buildings = [
 }
 
 
+    // 2. لو في حجز موجود في الفايربيز، نغير حالة القاعة المطلوبة لـ 'reserved'
+    if (data && data.reserved === true) {
+      this.buildings.forEach(building => {
+        building.halls.forEach(hall => {
+          if (hall.name === data.name || hall.name === "Digital") {
+            hall.status = 'reserved';
+          }
+        });
+      });
+    }
+
+    // 3. السطر السحري اللي بيخلي الأنجولار يحدّث الشاشة فوراً بعد الريفرش!
+    this.cdr.detectChanges();
+  });
+}
+
+
 
 
   toggleSort(): void {
