@@ -87,7 +87,7 @@
     </button>
   </ng-container>
 
-  <div *ngIf="hall.bookedDates && hall.bookedDates.length > 0" style="margin-top: 10px; font-size: 11px; color: #d9534f; text-align: left;">
+  <div *ngIf="isReserved" style="margin-top: 10px; font-size: 11px; color: #d9534f; text-align: left;">
     <span style="font-weight: bold; color: #555;">Booked times:</span>
     <div *ngFor="let time of hall.bookedDates" style="margin-top: 4px; background: #f8d7da; padding: 3px 6px; border-radius: 4px; border: 1px solid #f5c6cb;">
       ⏳ {{ time | date: 'dd/MM/yyyy => hh:mm ' }}
