@@ -5,5 +5,6 @@ export interface Hall {
   date?: string; // Only for 'date' status
   id: number;
 bookedDates?: string[] ;
+reservedDates?: string[] ;
 
 }

@@ -3,7 +3,8 @@ import { HallCharacteristics } from '../../models/hall-characteristics';
 import { Hall } from '../../models/hall';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Database,ref,set,onValue } from '@angular/fire/database';
+import { Database,ref,set,onValue,get } from '@angular/fire/database';
+import Swal from 'sweetalert2';
 
 
 @Component({
@@ -16,9 +17,10 @@ import { Database,ref,set,onValue } from '@angular/fire/database';
 export class RegisterationPage {
 
   buildings: HallCharacteristics[];
-
+  isReserved:boolean = false;
   sortedHalls: Hall[] = [];
   sortAsc = true;
+  reserveDate:string[] = [];
 constructor(private db: Database, private cdr: ChangeDetectorRef) {
 this.buildings = [
   {name: 'Mechanics "17"', id: 1, imageUrl: '../../assets/mechanika-photo.jpeg', globalDate: '2024-07-01', halls: [
@@ -76,6 +78,7 @@ this.buildings = [
 
   // تحديد مسار قاعدة البيانات
   const dbRef = ref(this.db, 'board1/outputs/digital');
+  const halltime=ref(this.db, 'board1/outputs/digital/date');
 
   // مراقبة الداتا
   onValue(dbRef, (snapshot) => {
@@ -88,6 +91,10 @@ this.buildings = [
       });
     });
 
+    if(data!==null){
+      this.isReserved = true;
+    }
+
     // 2. لو في حجز موجود في الفايربيز، نغير حالة القاعة المطلوبة لـ 'reserved'
     if (data && data.reserved === true) {
       this.buildings.forEach(building => {
@@ -98,6 +105,15 @@ this.buildings = [
         });
       });
     }
+    onValue(halltime, (snapshot) => {
+      const timeData = snapshot.val();
+      this.buildings.forEach(building => {
+    building.halls.forEach(hall => {
+      // ✅ إضافة شرط للتأكد من أننا نضع المواعيد في القاعة الصحيحة فقط
+      if (hall.name === data.name) {
+        hall.reservedDates = timeData || [];}});
+      });
+    });
 
     // 3. السطر السحري اللي بيخلي الأنجولار يحدّث الشاشة فوراً بعد الريفرش!
     this.cdr.detectChanges();
@@ -125,7 +141,12 @@ this.buildings = [
 onReserve(hall: any, selectedTime: string) {
 
   if (!selectedTime) {
-    alert('Please select a date and time first!');
+    Swal.fire({
+  icon: "error",
+  title: "Oops...",
+  text: "Please select a reservation time.",
+
+});
     return;
   }
 
@@ -133,7 +154,12 @@ onReserve(hall: any, selectedTime: string) {
   const hour = reservationDate.getHours();
 
   if (hour < 8 || hour >= 15) {
-    alert('Booking is only available between 08:00 AM and 03:00 PM');
+    Swal.fire({
+  icon: "error",
+  title: "Oops...",
+  text: "Reservations are only allowed between 8:00 AM and 3:00 PM.",
+
+});
     return;
   }
 
@@ -176,14 +202,19 @@ onReserve(hall: any, selectedTime: string) {
 
 
     set(dbRef, {
-      reserved: true,
+      date: hall.bookedDates,
       "reservation-code": randomCode,
       name: hall.name || "Hall Reservation",
     })
     .then(() => {
+      Swal.fire({
+  title: `Reserved successfully!\nFrom: ${from}\nTo: ${to} \nYour reservation code is: ${randomCode}  `,
+  icon: "success",
+  draggable: true
+});
 
 
-        alert(`Reserved successfully!\nFrom: ${from}\nTo: ${to} \nYour reservation code is: ${randomCode}  `);
+
 
 
       console.log('Reserved successfully! Reservation code:', randomCode);

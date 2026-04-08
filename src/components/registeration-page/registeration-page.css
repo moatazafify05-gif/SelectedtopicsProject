@@ -27,6 +27,8 @@
 }
 .styl2{
   display: flex;
+  
+    justify-content: space-between;
 }
 .building-card:hover {
   transform: translateY(-4px);
