@@ -87,8 +87,7 @@ this.buildings = [
         hall.status = 'available';
       });
     });
-    onValue(dbRef, (snapshot) => {
-      const data = snapshot.val();});
+   
 
       if(data!==null){
         this.isReserved = true;
