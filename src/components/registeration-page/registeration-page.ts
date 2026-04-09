@@ -9,7 +9,11 @@ import { RegisterationService } from '../../services/registeration-service';
 import { TimeRegistrationComponent } from '../time-registeration/time-registeration';
 import { RouterLink } from "@angular/router";
 
+interface Reservation {
+  startTime: string;
+  endTime: string;
 
+}
 @Component({
   selector: 'app-registeration-page',
   standalone: true,
@@ -23,7 +27,7 @@ export class RegisterationPage {
   isReserved:boolean = false;
   sortedHalls: Hall[] = [];
   sortAsc = true;
-  reserveDate:string[] = [];
+  reserveDate:Reservation[] = [];
 constructor(private db: Database, private cdr: ChangeDetectorRef, private registerationService: RegisterationService) {
 this.buildings = this.registerationService.buildings;
 
@@ -37,7 +41,7 @@ this.buildings = this.registerationService.buildings;
 
     ngOnInit(): void {
   // تعريف القاعات المبدئية
-  this.sortedHalls = [...this.buildings[0].halls];
+
 
   // تحديد مسار قاعدة البيانات
   const dbRef = ref(this.db, 'board1/outputs/digital');
@@ -101,96 +105,14 @@ this.buildings = this.registerationService.buildings;
 
 
 
-onReserve(hall: any, selectedTime: string) {
 
-  if (!selectedTime) {
-    Swal.fire({
-  icon: "error",
-  title: "Oops...",
-  text: "Please select a reservation time.",
-
-});
-    return;
-  }
-
-  const reservationDate = new Date(selectedTime);
-  const hour = reservationDate.getHours();
-
-  if (hour < 8 || hour >= 15) {
-    Swal.fire({
-  icon: "error",
-  title: "Oops...",
-  text: "Reservations are only allowed between 8:00 AM and 3:00 PM.",
-
-});
-    return;
-  }
-
-  if (!hall.bookedDates) {
-    hall.bookedDates = [];
-  }
-
-  const isOverlapping = hall.bookedDates.some((bookedTimeStr: string) => {
-    const bookedTime = new Date(bookedTimeStr);
-    const diffInMs = Math.abs(reservationDate.getTime() - bookedTime.getTime());
-    const diffInHours = diffInMs / (1000 * 60 * 60);
-    return diffInHours < 2;
-  });
-
-  if (isOverlapping) {
-    alert('This slot is unavailable. Each reservation needs a 2-hour window.');
-    return;
-  }
-
-
-  hall.bookedDates.push(selectedTime);
-
-
-  const endTime = new Date(reservationDate.getTime() + 2 * 60 * 60 * 1000);
-
-  const timeOptions: Intl.DateTimeFormatOptions = {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true
-  };
-
-  const from = reservationDate.toLocaleTimeString('en-US', timeOptions);
-  const to = endTime.toLocaleTimeString('en-US', timeOptions);
-
-
-    const randomCode = Math.floor(1000 + Math.random() * 9000);
-
-
-    const dbRef = ref(this.db, 'board1/outputs/digital');
-
-
-    set(dbRef, {
-      date: hall.bookedDates,
-      "reservation-code": randomCode,
-      name: hall.name || "Hall Reservation",
-    })
-    .then(() => {
-      Swal.fire({
-  title: `Reserved successfully!\nFrom: ${from}\nTo: ${to} \nYour reservation code is: ${randomCode}  `,
-  icon: "success",
-  draggable: true
-});
-
-
-
-
-
-      console.log('Reserved successfully! Reservation code:', randomCode);
-    })
-    .catch((error) => {
-      alert('An error occurred while reserving. Please try again.');
-      console.error('Error:', error);
-    });
-}
   onReserveAll(): void {
     alert(`Opening reservation form for ${this.buildings[0].name}`);
   }
-
+  setValue(hall: Hall): void {
+    this.registerationService.currentbuildingName = hall.hallname;
+    this.registerationService.currentHall = hall;
+  }
 
 
 }

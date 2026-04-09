@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HallCharacteristics } from '../models/hall-characteristics';
+import { Hall } from '../models/hall';
+import { Database, ref, set, onValue } from '@angular/fire/database'; // Update the path to your Database service
 
 @Injectable({
   providedIn: 'root',
@@ -7,7 +9,14 @@ import { HallCharacteristics } from '../models/hall-characteristics';
 
 export class RegisterationService {
   buildings:HallCharacteristics[];
-  constructor() {
+  currentbuildingName:string = '';
+  currentHall:Hall= {hallname: '', status: 'available', capacity: 0, id: 0};
+  globalReservedDates: string[] = [];
+
+  constructor(
+    private db: Database,
+
+  ) {
     this.buildings = [
   {name: 'Mechanics "17"', id: 1, imageUrl: '../../assets/mechanika-photo.jpeg', globalDate: '2024-07-01', halls: [
     {hallname: 'Hall17101', status: 'available', capacity: 100, id: 1},
@@ -49,6 +58,10 @@ export class RegisterationService {
   {hallname: 'Hall 20103', status: 'available', capacity: 200, id: 3},
 ]
 }];
-}
+onValue(ref(this.db, 'board1/outputs/digital/date'), (snapshot) => {
+  const data = snapshot.val();
+  this.globalReservedDates=data || [];
 
+});
+}
 }

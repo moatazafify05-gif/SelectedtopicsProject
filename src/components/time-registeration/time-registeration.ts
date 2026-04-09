@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import { RegisterationService } from '../../services/registeration-service';
 import { HallCharacteristics } from '../../models/hall-characteristics';
 import { RouterLink } from "@angular/router";
+import { Hall } from '../../models/hall';
 interface Reservation {
   start: string;
   end: string;
@@ -24,6 +25,7 @@ export class TimeRegistrationComponent implements OnInit {
   sortedHalls: any[] = [];
   sortAsc = true;
   isReserved = false;
+  currentHallName: string = '';
 
   // ── Modal state ───────────────────────────────────────
   showModal = true;
@@ -33,7 +35,7 @@ export class TimeRegistrationComponent implements OnInit {
   today = '';
 
   // ── Active hall being reserved ────────────────────────
-  activeHall: any = null;
+  activeHall:any = {hallname: '', status: 'available', capacity: 0, id: 0};
 
   readonly OPEN_HOUR  = 8;
   readonly CLOSE_HOUR = 15;
@@ -76,6 +78,8 @@ export class TimeRegistrationComponent implements OnInit {
         );
       }
 
+      this.currentHallName= this.registerationService.currentbuildingName;
+      this.activeHall = this.registerationService.currentHall;
       // Sync booked dates from Firebase
       // onValue(timeRef, (timeSnap) => {
       //   const timeData: Reservation[] = timeSnap.val() || [];
@@ -93,25 +97,11 @@ export class TimeRegistrationComponent implements OnInit {
   }
 
   // ── Sorting ───────────────────────────────────────────
-  toggleSort(): void {
-    this.sortAsc = !this.sortAsc;
-    const order = ['available', 'date', 'booked'];
-    this.sortedHalls = [...this.sortedHalls].sort((a, b) => {
-      const ai = order.indexOf(a.status);
-      const bi = order.indexOf(b.status);
-      return this.sortAsc ? ai - bi : bi - ai;
-    });
-  }
 
-  // ── Modal controls ────────────────────────────────────
-  openModal(hall: any): void {
-    this.activeHall = hall;
-    this.showModal  = true;
-  }
 
   closeModal(): void {
     this.showModal  = false;
-    this.activeHall = null;
+    this.activeHall = {hallname: '', status: 'available', capacity: 0, id: 0};
     this.resetFields();
   }
 
@@ -254,7 +244,7 @@ export class TimeRegistrationComponent implements OnInit {
     try {
       await set(dbRef, {
         date: updatedDates,
-        reserved: true,
+        
         'reservation-code': randomCode,
         name: this.activeHall.hallname ?? 'Hall Reservation',
       });

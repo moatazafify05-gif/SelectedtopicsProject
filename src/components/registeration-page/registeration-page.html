@@ -115,6 +115,7 @@
                     class="reserve-btn"
 
                     routerLink="/home/time-registration"
+                    (click)="setValue(hall)"
                   >
                     Reserve
                   </button>
@@ -144,7 +145,8 @@
                       border: 1px solid #f5c6cb;
                     "
                   >
-                    ⏳ {{ time | date: 'dd/MM/yyyy => hh:mm ' }}
+                    ⏳ {{ time| date: 'dd/MM/yyyy => hh:mm ' }}
+
                   </div>
                 </div>
               </td>
