@@ -240,13 +240,23 @@ export class TimeRegistrationComponent implements OnInit {
 
     const randomCode = Math.floor(1000 + Math.random() * 9000);
     const dbRef = ref(this.db, 'board1/outputs/digital');
+    const starttimeRef = ref(this.db, 'board1/outputs/digital/startdate');
+    const endtimeRef = ref(this.db, 'board1/outputs/digital/enddate');
 
     try {
       await set(dbRef, {
-        date: updatedDates,
-        
+
         'reservation-code': randomCode,
         name: this.activeHall.hallname ?? 'Hall Reservation',
+      });
+      await set(starttimeRef, {
+
+        'startdate':startISO
+      });
+      await set(endtimeRef, {
+        'endtime': endISO
+
+
       });
 
       // Sync local state

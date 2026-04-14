@@ -8,12 +8,9 @@ import Swal from 'sweetalert2';
 import { RegisterationService } from '../../services/registeration-service';
 import { TimeRegistrationComponent } from '../time-registeration/time-registeration';
 import { RouterLink } from "@angular/router";
+import { Reservation } from '../../models/reservation';
 
-interface Reservation {
-  startTime: string;
-  endTime: string;
 
-}
 @Component({
   selector: 'app-registeration-page',
   standalone: true,
@@ -21,13 +18,14 @@ interface Reservation {
   templateUrl: './registeration-page.html',
   styleUrl: './registeration-page.css',
 })
-export class RegisterationPage {
+export class RegisterationPage  {
 
   buildings: HallCharacteristics[];
-  isReserved:boolean = false;
+  isReserved:boolean = true;
   sortedHalls: Hall[] = [];
   sortAsc = true;
   reserveDate:Reservation[] = [];
+
 constructor(private db: Database, private cdr: ChangeDetectorRef, private registerationService: RegisterationService) {
 this.buildings = this.registerationService.buildings;
 
@@ -39,53 +37,60 @@ this.buildings = this.registerationService.buildings;
 
 
 
-    ngOnInit(): void {
-  // تعريف القاعات المبدئية
 
+   ngOnInit(): void {
+  const dbRef       = ref(this.db, 'board1/outputs/digital');
+  const starttimeRef = ref(this.db, 'board1/outputs/digital/startdate');
+  const endtimeRef   = ref(this.db, 'board1/outputs/digital/enddate');
 
-  // تحديد مسار قاعدة البيانات
-  const dbRef = ref(this.db, 'board1/outputs/digital');
-  const halltime=ref(this.db, 'board1/outputs/digital/date');
+  let currentName  = '';
+  let currentStart = '';
+  let currentEnd   = '';
 
-  // مراقبة الداتا
   onValue(dbRef, (snapshot) => {
     const data = snapshot.val();
+    if (data?.name) currentName = data.name;
+    this.tryAddReservation(currentName, currentStart, currentEnd);
+    this.cdr.detectChanges();
+  });
 
-    // 1. نرجع كل القاعات لحالة 'available' كوضع افتراضي عشان لو لغيت الحجز
-    this.buildings.forEach(building => {
-      building.halls.forEach(hall => {
-        hall.status = 'available';
-      });
-    });
+  onValue(starttimeRef, (snapshot) => {
+    const data = snapshot.val();
+    if (data?.startdate) currentStart = data.startdate;
+    this.tryAddReservation(currentName, currentStart, currentEnd);
+    this.cdr.detectChanges();
+  });
 
-    if(data!==null){
-      this.isReserved = true;
-    }
-
-    // 2. لو في حجز موجود في الفايربيز، نغير حالة القاعة المطلوبة لـ 'reserved'
-    if (data && data.reserved === true) {
-      this.buildings.forEach(building => {
-        building.halls.forEach(hall => {
-          if (hall.hallname === data.name || hall.hallname === "Digital") {
-            hall.status = 'reserved';
-          }
-        });
-      });
-    }
-    onValue(halltime, (snapshot) => {
-      const timeData = snapshot.val();
-      this.buildings.forEach(building => {
-    building.halls.forEach(hall => {
-      // ✅ إضافة شرط للتأكد من أننا نضع المواعيد في القاعة الصحيحة فقط
-      if (hall.hallname === data.name) {
-        hall.reservedDates = timeData || [];}});
-      });
-    });
-
-    // 3. السطر السحري اللي بيخلي الأنجولار يحدّث الشاشة فوراً بعد الريفرش!
+  onValue(endtimeRef, (snapshot) => {
+    const data = snapshot.val();
+    if (data?.endtime) currentEnd = data.endtime;
+    this.tryAddReservation(currentName, currentStart, currentEnd);
     this.cdr.detectChanges();
   });
 }
+
+private tryAddReservation(hallName: string, start: string, end: string): void {
+  if (!hallName || !start || !end) return;
+
+  this.buildings.forEach(building => {
+    building.halls.forEach(hall => {
+      if (hall.hallname === hallName) {
+        if (!hall.bookedDates) hall.bookedDates = [] as any[];
+
+        // متضيفش نفس الحجز أكتر من مرة
+        const alreadyExists = hall.bookedDates.some(
+          (r:any) => r.start === start && r.end === end
+        );
+
+        if (!alreadyExists) {
+          hall.bookedDates.push({ start, end } as Reservation);
+        }
+      }
+    });
+  });
+}
+
+
 
 
 

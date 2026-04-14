@@ -134,20 +134,22 @@
                   *ngIf="isReserved"
                   style="margin-top: 10px; font-size: 11px; color: #d9534f; text-align: left"
                 >
-                  <span style="font-weight: bold; color: #555">Booked times:</span>
                   <div
-                    *ngFor="let time of hall.reservedDates"
-                    style="
-                      margin-top: 4px;
-                      background: #f8d7da;
-                      padding: 3px 6px;
-                      border-radius: 4px;
-                      border: 1px solid #f5c6cb;
-                    "
-                  >
-                    ⏳ {{ time| date: 'dd/MM/yyyy => hh:mm ' }}
-
-                  </div>
+    *ngFor="let res of hall.bookedDates"
+    style="
+      margin-top: 4px;
+      background: #f8d7da;
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid #f5c6cb;
+      color: #c0392b;
+      font-size: 12px;
+    "
+  >
+    🔴 Reserved from {{ res.start | date:'hh:mm a' }}
+    to {{ res.end | date:'hh:mm a' }}
+    ({{ res.start | date:'dd/MM/yyyy' }})
+  </div>
                 </div>
               </td>
             </tr>
@@ -157,5 +159,8 @@
 
       <!-- Card Footer -->
     </div>
+
   }
 </div>
+
+
