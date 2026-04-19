@@ -38,34 +38,30 @@ this.buildings = this.registerationService.buildings;
 
 
 
-   ngOnInit(): void {
-  const dbRef       = ref(this.db, 'board1/outputs/digital');
-  const starttimeRef = ref(this.db, 'board1/outputs/digital/startdate');
-  const endtimeRef   = ref(this.db, 'board1/outputs/digital/enddate');
+   private addedKeys = new Set<string>(); // ✅ عشان نمنع التكرار
 
-  let currentName  = '';
-  let currentStart = '';
-  let currentEnd   = '';
+ngOnInit(): void {
+  this.buildings.forEach(building => {
+    building.halls.forEach(hall => {
+      const hallKey = hall.hallname.replace(/\s+/g, '_');
+      const hallRef = ref(this.db, `board1/halls/${hallKey}`);
 
-  onValue(dbRef, (snapshot) => {
-    const data = snapshot.val();
-    if (data?.name) currentName = data.name;
-    this.tryAddReservation(currentName, currentStart, currentEnd);
-    this.cdr.detectChanges();
-  });
+      onValue(hallRef, (snapshot) => {
+        const data = snapshot.val();
+        console.log('Firebase data for', hall.hallname, data); // ✅ شوف الداتا جاية ازاي
 
-  onValue(starttimeRef, (snapshot) => {
-    const data = snapshot.val();
-    if (data?.startdate) currentStart = data.startdate;
-    this.tryAddReservation(currentName, currentStart, currentEnd);
-    this.cdr.detectChanges();
-  });
+        if (!data) {
+          hall.reservations = [];
+        } else if (Array.isArray(data)) {
+          hall.reservations = data;
+        } else {
+          // ✅ Firebase بيرجع object مش array فنحوله
+          hall.reservations = Object.values(data);
+        }
 
-  onValue(endtimeRef, (snapshot) => {
-    const data = snapshot.val();
-    if (data?.endtime) currentEnd = data.endtime;
-    this.tryAddReservation(currentName, currentStart, currentEnd);
-    this.cdr.detectChanges();
+        this.cdr.detectChanges();
+      });
+    });
   });
 }
 
@@ -75,11 +71,11 @@ private tryAddReservation(hallName: string, start: string, end: string): void {
   this.buildings.forEach(building => {
     building.halls.forEach(hall => {
       if (hall.hallname === hallName) {
-        if (!hall.bookedDates) hall.bookedDates = [] as any[];
+        if (!hall.bookedDates) hall.bookedDates = [] as Reservation[];
 
         // متضيفش نفس الحجز أكتر من مرة
         const alreadyExists = hall.bookedDates.some(
-          (r:any) => r.start === start && r.end === end
+          (r:Reservation) => r.start === start && r.end === end
         );
 
         if (!alreadyExists) {

@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Database, ref, set, onValue } from '@angular/fire/database';
+import { Database, ref, set,get, onValue } from '@angular/fire/database';
 import Swal from 'sweetalert2';
 import { RegisterationService } from '../../services/registeration-service';
 import { HallCharacteristics } from '../../models/hall-characteristics';
@@ -209,85 +209,79 @@ export class TimeRegistrationComponent implements OnInit {
   }
 
   // ── Save to Firebase ──────────────────────────────────
-  async confirmReservation(): Promise<void> {
-    if (!this.isFormValid || !this.activeHall) return;
-
-    const startISO = `${this.selectedDate}T${this.startTime}:00`;
-    const endISO   = `${this.selectedDate}T${this.endTime}:00`;
-    const newStart = new Date(startISO).getTime();
-    const newEnd   = new Date(endISO).getTime();
-
-    // Overlap check
-    const isOverlapping = (this.activeHall.bookedDates ?? []).some(
-      ({ start, end }: Reservation) =>
-        newStart < new Date(end).getTime() && newEnd > new Date(start).getTime()
-    );
-
-    if (isOverlapping) {
-      await Swal.fire({
-        icon: 'warning',
-        title: 'Slot Unavailable',
-        text: 'This time slot overlaps with an existing reservation. Please choose a different time.',
-        confirmButtonText: 'Got it',
-      });
-      return;
-    }
-
-    const updatedDates: Reservation[] = [
-      ...(this.activeHall.bookedDates ?? []),
-      { start: startISO, end: endISO },
-    ];
-
-    const randomCode = Math.floor(1000 + Math.random() * 9000);
-    const dbRef = ref(this.db, 'board1/outputs/digital');
-    const starttimeRef = ref(this.db, 'board1/outputs/digital/startdate');
-    const endtimeRef = ref(this.db, 'board1/outputs/digital/enddate');
-
-    try {
-      await set(dbRef, {
-
-        'reservation-code': randomCode,
-        name: this.activeHall.hallname ?? 'Hall Reservation',
-      });
-      await set(starttimeRef, {
-
-        'startdate':startISO
-      });
-      await set(endtimeRef, {
-        'endtime': endISO
 
 
-      });
+async confirmReservation(): Promise<void> {
+  if (!this.isFormValid || !this.activeHall) return;
 
-      // Sync local state
-      this.activeHall.bookedDates = updatedDates;
+  const startISO = `${this.selectedDate}T${this.startTime}:00`;
+  const endISO   = `${this.selectedDate}T${this.endTime}:00`;
+  const newStart = new Date(startISO).getTime();
+  const newEnd   = new Date(endISO).getTime();
 
-      await Swal.fire({
-        icon: 'success',
-        title: 'Reservation Confirmed!',
-        html: `
-          <p style="color:#666;margin-bottom:8px;">${this.formatDate(this.selectedDate)}</p>
-          <p style="font-weight:600;font-size:18px;">
-            ${this.formatTime12(this.startTime)} &rarr; ${this.formatTime12(this.endTime)}
-          </p>
-          <p style="color:#888;margin-top:6px;">Duration: ${this.duration}</p>
-          <p style="margin-top:10px;font-size:14px;">
-            Reservation code: <strong>${randomCode}</strong>
-          </p>
-        `,
-        timer: 4000,
-        showConfirmButton: false,
-      });
+  // Overlap check
+  const isOverlapping = (this.activeHall.reservations ?? []).some(
+    (r: any) => newStart < new Date(r.endTime).getTime() &&
+                newEnd   > new Date(r.startTime).getTime()
+  );
 
-      this.closeModal();
-
-    } catch (error) {
-      console.error('Firebase error:', error);
-      await Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'An error occurred while saving. Please try again.',
-      });
-    }
+  if (isOverlapping) {
+    await Swal.fire({
+      icon: 'warning',
+      title: 'Slot Unavailable',
+      text: 'This time slot overlaps with an existing reservation.',
+      confirmButtonText: 'Got it',
+    });
+    return;
   }
+
+  const randomCode = Math.floor(1000 + Math.random() * 9000);
+  const hallKey = this.activeHall.hallname.replace(/\s+/g, '_');
+
+  // ✅ Path لكل قاعة
+  const hallReservationsRef = ref(this.db, `board1/halls/${hallKey}`);
+  const dbRef = ref(this.db, 'board1/outputs/digital');
+
+  try {
+    // ✅ اقرأ الموجود الأول
+    const snapshot = await get(hallReservationsRef);
+    const existing: any[] = snapshot.val() ?? [];
+
+    // ✅ ضيف الجديد على القديم
+    const updated = [...existing, { starttime: startISO, endtime: endISO }];
+
+    // ✅ احفظ الكل مرة واحدة
+    await set(hallReservationsRef, updated);
+
+    await set(dbRef, {
+      'reservation-code': randomCode,
+      name: this.activeHall.hallname,
+
+    });
+
+    if (!this.activeHall.reservations) this.activeHall.reservations = [];
+    this.activeHall.reservations.push({ starttime: startISO, endtime: endISO });
+
+    await Swal.fire({
+      icon: 'success',
+      title: 'Reservation Confirmed!',
+      html: `
+        <p>${this.formatDate(this.selectedDate)}</p>
+        <p style="font-weight:600;font-size:18px;">
+          ${this.formatTime12(this.startTime)} &rarr; ${this.formatTime12(this.endTime)}
+        </p>
+        <p>Duration: ${this.duration}</p>
+        <p>Reservation code: <strong>${randomCode}</strong></p>
+      `,
+      timer: 4000,
+      showConfirmButton: false,
+    });
+
+    this.closeModal();
+
+  } catch (error) {
+    console.error('Firebase error:', error);
+    await Swal.fire({ icon: 'error', title: 'Error', text: 'Please try again.' });
+  }
+}
 }

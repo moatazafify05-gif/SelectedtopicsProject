@@ -135,7 +135,7 @@
                   style="margin-top: 10px; font-size: 11px; color: #d9534f; text-align: left"
                 >
                   <div
-    *ngFor="let res of hall.bookedDates"
+    *ngFor="let res of hall.reservations"
     style="
       margin-top: 4px;
       background: #f8d7da;
@@ -146,9 +146,9 @@
       font-size: 12px;
     "
   >
-    🔴 Reserved from {{ res.start | date:'hh:mm a' }}
-    to {{ res.end | date:'hh:mm a' }}
-    ({{ res.start | date:'dd/MM/yyyy' }})
+    🔴 Reserved from {{ res.starttime | date:'hh:mm a' }}
+    to {{ res.endtime | date:'hh:mm a' }}
+    ({{ res.starttime | date:'dd/MM/yyyy' }})
   </div>
                 </div>
               </td>
