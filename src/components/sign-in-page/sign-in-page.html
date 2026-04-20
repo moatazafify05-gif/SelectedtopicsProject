@@ -82,13 +82,13 @@
         </div>
 
         <!-- Submit -->
-        <button type="submit" class="submit-btn" [class.loading]="loading" routerLink="/home">
+        <button type="button" class="submit-btn" [class.loading]="loading" (click)="onSubmit()">
           <span *ngIf="!loading">Sign In</span>
           <span *ngIf="loading" class="spinner"></span>
           <svg *ngIf="!loading" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
           </svg>
-        </button>
+</button>
 
       </form>
 
@@ -120,7 +120,7 @@
       <!-- Sign Up Link -->
       <p class="switch-link">
         Don't have an account?
-        <a href="#" class="switch-anchor" (click)="goToSignUp($event)" routerLink="/sign-up">Sign Up</a>
+        <a href="#" class="switch-anchor" routerLink="/sign-up">Sign Up</a>
       </p>
 
     </div>

@@ -1,12 +1,14 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Database, ref, set,get, onValue } from '@angular/fire/database';
+import { Database, ref, set, get, onValue } from '@angular/fire/database';
 import Swal from 'sweetalert2';
 import { RegisterationService } from '../../services/registeration-service';
 import { HallCharacteristics } from '../../models/hall-characteristics';
-import { RouterLink } from "@angular/router";
+import { RouterLink } from '@angular/router';
 import { Hall } from '../../models/hall';
+import emailjs from '@emailjs/browser';
+import { AuthService } from '../../services/auth.service';
 interface Reservation {
   start: string;
   end: string;
@@ -19,7 +21,6 @@ interface Reservation {
   styleUrls: ['../time-registeration/time-registeration.css'],
 })
 export class TimeRegistrationComponent implements OnInit {
-
   // ── Data ─────────────────────────────────────────────
   buildings: HallCharacteristics[];
   sortedHalls: any[] = [];
@@ -35,17 +36,19 @@ export class TimeRegistrationComponent implements OnInit {
   today = '';
 
   // ── Active hall being reserved ────────────────────────
-  activeHall:any = {hallname: '', status: 'available', capacity: 0, id: 0};
+  activeHall: any = { hallname: '', status: 'available', capacity: 0, id: 0 };
 
-  readonly OPEN_HOUR  = 8;
+  readonly OPEN_HOUR = 8;
   readonly CLOSE_HOUR = 15;
 
   constructor(
     private db: Database,
     private cdr: ChangeDetectorRef,
     private registerationService: RegisterationService,
+    private authService: AuthService,
   ) {
     this.buildings = this.registerationService.buildings;
+    emailjs.init('S7q0nQVgOb0fiyolQ');
   }
 
   // ── Lifecycle ─────────────────────────────────────────
@@ -53,32 +56,29 @@ export class TimeRegistrationComponent implements OnInit {
     this.today = new Date().toISOString().split('T')[0];
     this.sortedHalls = [...this.buildings[0].halls];
 
-
-    const dbRef   = ref(this.db, 'board1/outputs/digital');
+    const dbRef = ref(this.db, 'board1/outputs/digital');
     const timeRef = ref(this.db, 'board1/outputs/digital/date');
 
     onValue(dbRef, (snapshot) => {
       const data = snapshot.val();
 
       // Reset all halls to available
-      this.buildings.forEach(b =>
-        b.halls.forEach(h => (h.status = 'available'))
-      );
+      this.buildings.forEach((b) => b.halls.forEach((h) => (h.status = 'available')));
 
       if (data !== null) this.isReserved = true;
 
       // Mark reserved hall
       if (data?.reserved === true) {
-        this.buildings.forEach(b =>
-          b.halls.forEach(h => {
+        this.buildings.forEach((b) =>
+          b.halls.forEach((h) => {
             if (h.hallname === data.name || h.hallname === 'Digital') {
               h.status = 'reserved';
             }
-          })
+          }),
         );
       }
 
-      this.currentHallName= this.registerationService.currentbuildingName;
+      this.currentHallName = this.registerationService.currentbuildingName;
       this.activeHall = this.registerationService.currentHall;
       // Sync booked dates from Firebase
       // onValue(timeRef, (timeSnap) => {
@@ -98,17 +98,16 @@ export class TimeRegistrationComponent implements OnInit {
 
   // ── Sorting ───────────────────────────────────────────
 
-
   closeModal(): void {
-    this.showModal  = false;
-    this.activeHall = {hallname: '', status: 'available', capacity: 0, id: 0};
+    this.showModal = false;
+    this.activeHall = { hallname: '', status: 'available', capacity: 0, id: 0 };
     this.resetFields();
   }
 
   resetFields(): void {
     this.selectedDate = '';
-    this.startTime    = '';
-    this.endTime      = '';
+    this.startTime = '';
+    this.endTime = '';
   }
 
   // ── Validation ────────────────────────────────────────
@@ -118,11 +117,11 @@ export class TimeRegistrationComponent implements OnInit {
     const [sh, sm] = this.startTime.split(':').map(Number);
     const [eh, em] = this.endTime.split(':').map(Number);
     const startMins = sh * 60 + sm;
-    const endMins   = eh * 60 + em;
+    const endMins = eh * 60 + em;
 
     return (
       sh >= this.OPEN_HOUR &&
-      sh  < this.CLOSE_HOUR &&
+      sh < this.CLOSE_HOUR &&
       (eh < this.CLOSE_HOUR || (eh === this.CLOSE_HOUR && em === 0)) &&
       endMins > startMins
     );
@@ -131,18 +130,17 @@ export class TimeRegistrationComponent implements OnInit {
   get validationMessage(): string {
     if (!this.selectedDate || !this.startTime || !this.endTime) return '';
 
-    const [sh]      = this.startTime.split(':').map(Number);
-    const [eh, em]  = this.endTime.split(':').map(Number);
-    const [, sm]    = this.startTime.split(':').map(Number);
+    const [sh] = this.startTime.split(':').map(Number);
+    const [eh, em] = this.endTime.split(':').map(Number);
+    const [, sm] = this.startTime.split(':').map(Number);
     const startMins = sh * 60 + sm;
-    const endMins   = eh * 60 + em;
+    const endMins = eh * 60 + em;
 
     if (sh < this.OPEN_HOUR || sh >= this.CLOSE_HOUR)
       return 'Start time must be between 08:00 AM and 03:00 PM.';
     if (eh > this.CLOSE_HOUR || (eh === this.CLOSE_HOUR && em > 0))
       return 'End time cannot be after 03:00 PM.';
-    if (endMins <= startMins)
-      return 'End time must be after start time.';
+    if (endMins <= startMins) return 'End time must be after start time.';
 
     return '';
   }
@@ -151,21 +149,21 @@ export class TimeRegistrationComponent implements OnInit {
     if (!this.startTime || !this.endTime) return '';
     const [sh, sm] = this.startTime.split(':').map(Number);
     const [eh, em] = this.endTime.split(':').map(Number);
-    const total = (eh * 60 + em) - (sh * 60 + sm);
+    const total = eh * 60 + em - (sh * 60 + sm);
     if (total <= 0) return '';
     const h = Math.floor(total / 60);
     const m = total % 60;
     if (h && m) return `${h}h ${m}min`;
-    if (h)      return `${h}h`;
+    if (h) return `${h}h`;
     return `${m}min`;
   }
 
   get isFullyBooked(): boolean {
     if (!this.activeHall) return false;
-    const totalMs  = (this.CLOSE_HOUR - this.OPEN_HOUR) * 3_600_000;
+    const totalMs = (this.CLOSE_HOUR - this.OPEN_HOUR) * 3_600_000;
     const todayStr = new Date().toISOString().split('T')[0];
     const dayStart = new Date(`${todayStr}T08:00:00`).getTime();
-    const dayEnd   = new Date(`${todayStr}T15:00:00`).getTime();
+    const dayEnd = new Date(`${todayStr}T15:00:00`).getTime();
 
     const sorted = (this.activeHall.bookedDates ?? [])
       .map(({ start, end }: Reservation) => ({
@@ -183,7 +181,7 @@ export class TimeRegistrationComponent implements OnInit {
 
     const bookedMs = merged.reduce(
       (t, { s, e }) => t + Math.max(0, Math.min(e, dayEnd) - Math.max(s, dayStart)),
-      0
+      0,
     );
 
     return bookedMs >= totalMs;
@@ -193,8 +191,8 @@ export class TimeRegistrationComponent implements OnInit {
   formatTime12(time: string): string {
     if (!time) return '';
     const [h, m] = time.split(':').map(Number);
-    const ampm   = h >= 12 ? 'PM' : 'AM';
-    const h12    = h % 12 || 12;
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 || 12;
     return `${h12}:${String(m).padStart(2, '0')} ${ampm}`;
   }
 
@@ -210,62 +208,77 @@ export class TimeRegistrationComponent implements OnInit {
 
   // ── Save to Firebase ──────────────────────────────────
 
+  async confirmReservation(): Promise<void> {
+    if (!this.isFormValid || !this.activeHall) return;
 
-async confirmReservation(): Promise<void> {
-  if (!this.isFormValid || !this.activeHall) return;
+    const startISO = `${this.selectedDate}T${this.startTime}:00`;
+    const endISO = `${this.selectedDate}T${this.endTime}:00`;
+    const newStart = new Date(startISO).getTime();
+    const newEnd = new Date(endISO).getTime();
 
-  const startISO = `${this.selectedDate}T${this.startTime}:00`;
-  const endISO   = `${this.selectedDate}T${this.endTime}:00`;
-  const newStart = new Date(startISO).getTime();
-  const newEnd   = new Date(endISO).getTime();
+    // Overlap check
+    const isOverlapping = (this.activeHall.reservations ?? []).some(
+      (r: any) =>
+        newStart < new Date(r.endTime).getTime() && newEnd > new Date(r.startTime).getTime(),
+    );
 
-  // Overlap check
-  const isOverlapping = (this.activeHall.reservations ?? []).some(
-    (r: any) => newStart < new Date(r.endTime).getTime() &&
-                newEnd   > new Date(r.startTime).getTime()
-  );
+    if (isOverlapping) {
+      await Swal.fire({
+        icon: 'warning',
+        title: 'Slot Unavailable',
+        text: 'This time slot overlaps with an existing reservation.',
+        confirmButtonText: 'Got it',
+      });
+      return;
+    }
 
-  if (isOverlapping) {
-    await Swal.fire({
-      icon: 'warning',
-      title: 'Slot Unavailable',
-      text: 'This time slot overlaps with an existing reservation.',
-      confirmButtonText: 'Got it',
-    });
-    return;
-  }
+    const randomCode = Math.floor(1000 + Math.random() * 9000);
+    const hallKey = this.activeHall.hallname.replace(/\s+/g, '_');
 
-  const randomCode = Math.floor(1000 + Math.random() * 9000);
-  const hallKey = this.activeHall.hallname.replace(/\s+/g, '_');
+    // ✅ Path لكل قاعة
+    const hallReservationsRef = ref(this.db, `board1/halls/${hallKey}`);
+    const dbRef = ref(this.db, 'board1/outputs/digital');
 
-  // ✅ Path لكل قاعة
-  const hallReservationsRef = ref(this.db, `board1/halls/${hallKey}`);
-  const dbRef = ref(this.db, 'board1/outputs/digital');
+    try {
+      const snapshot = await get(hallReservationsRef);
+      const existing: any[] = snapshot.val() ?? [];
+      const updated = [...existing, { starttime: startISO, endtime: endISO }];
+      await set(hallReservationsRef, updated);
+      await set(dbRef, {
+        'reservation-code': randomCode,
+        name: this.activeHall.hallname,
+      });
 
-  try {
-    // ✅ اقرأ الموجود الأول
-    const snapshot = await get(hallReservationsRef);
-    const existing: any[] = snapshot.val() ?? [];
+      if (!this.activeHall.reservations) this.activeHall.reservations = [];
+      this.activeHall.reservations.push({ starttime: startISO, endtime: endISO });
 
-    // ✅ ضيف الجديد على القديم
-    const updated = [...existing, { starttime: startISO, endtime: endISO }];
+      // ✅ try/catch منفصل للـ emailjs عشان لو فشل مايأثرش على الحجز
+      const userEmail = this.authService.getCurrentUser()?.email;
+      if (userEmail) {
+        try {
+          await emailjs.send(
+            'service_wbscn12',
+            'template_9gf13qe', // ✅ ده الصح
+            {
+              to_email: userEmail,
+              hall_name: this.activeHall.hallname,
+              reservation_code: randomCode,
+              start_time: this.formatTime12(this.startTime),
+              end_time: this.formatTime12(this.endTime),
+              date: this.formatDate(this.selectedDate),
+            },
+            'S7q0nQVgOb0fiyolQ',
+          );
+          console.log('Email sent successfully!');
+        } catch (emailErr) {
+          console.error('Email error:', emailErr); // ✅ الـ error هيظهر في الـ console بس مش هيأثر على الحجز
+        }
+      }
 
-    // ✅ احفظ الكل مرة واحدة
-    await set(hallReservationsRef, updated);
-
-    await set(dbRef, {
-      'reservation-code': randomCode,
-      name: this.activeHall.hallname,
-
-    });
-
-    if (!this.activeHall.reservations) this.activeHall.reservations = [];
-    this.activeHall.reservations.push({ starttime: startISO, endtime: endISO });
-
-    await Swal.fire({
-      icon: 'success',
-      title: 'Reservation Confirmed!',
-      html: `
+      await Swal.fire({
+        icon: 'success',
+        title: 'Reservation Confirmed!',
+        html: `
         <p>${this.formatDate(this.selectedDate)}</p>
         <p style="font-weight:600;font-size:18px;">
           ${this.formatTime12(this.startTime)} &rarr; ${this.formatTime12(this.endTime)}
@@ -273,15 +286,14 @@ async confirmReservation(): Promise<void> {
         <p>Duration: ${this.duration}</p>
         <p>Reservation code: <strong>${randomCode}</strong></p>
       `,
-      timer: 4000,
-      showConfirmButton: false,
-    });
+        timer: 4000,
+        showConfirmButton: false,
+      });
 
-    this.closeModal();
-
-  } catch (error) {
-    console.error('Firebase error:', error);
-    await Swal.fire({ icon: 'error', title: 'Error', text: 'Please try again.' });
+      this.closeModal();
+    } catch (error) {
+      console.error('Firebase error:', error);
+      await Swal.fire({ icon: 'error', title: 'Error', text: 'Please try again.' });
+    }
   }
-}
 }
